@@ -31,13 +31,12 @@ app.post('/chat', async (req, res) => {
 
     const prompt = `You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand.
 
-Use this trending data to give helpful answers:
-
+Use this trending data:
 ${await getTrendingHats()}
 
-User: ${message}
+User question: ${message}
 
-Be creative, fun, and always give actionable marketing ideas (captions, scripts, strategies).`;
+Be creative, fun, and give actionable marketing ideas (captions, TikTok scripts, strategies).`;
 
     const result = await model.invoke(prompt);
 
@@ -48,5 +47,5 @@ Be creative, fun, and always give actionable marketing ideas (captions, scripts,
   }
 });
 
-// This is the important part for Vercel
+// === THIS IS THE KEY FOR VERCEL ===
 export default app;

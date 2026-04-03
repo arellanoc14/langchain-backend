@@ -13,32 +13,35 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Strong Trending Data
 const getTrendingHats = async () => {
-  return `🔥 **Real Trending Hat Styles - April 2026**:
+  return `🔥 **REAL TRENDING HAT STYLES - APRIL 2026**:
 
-1. **Patriotic & USA Skull Caps** — Extremely popular right now.
-2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer.
-3. **Retro Flat Caps & Baker Boy Hats** — Strong comeback.
-4. **Crochet & Knit Caps** — Soft aesthetic trending on TikTok.
-5. **Bold Logo Baseball Caps** — Sporty looks dominating.
+1. **Patriotic & USA Skull Caps** — Extremely popular right now, especially bold graphic designs.
+2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer, very photogenic.
+3. **Retro Flat Caps & Baker Boy Hats** — Strong 90s revival in streetwear.
+4. **Crochet & Knit Caps** — Soft handmade aesthetic trending heavily on TikTok.
+5. **Bold Logo & Color-Blocked Baseball Caps** — Sporty looks with big logos are dominating.
 
-Patriotic themes and textured materials are performing the best this month.`;
+Patriotic themes and textured materials are currently performing the best.`;
 };
 
 app.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    const prompt = `You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand.
+    // Force the model to use the trending data
+    const systemPrompt = `You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand.
 
-Trending data (April 2026):
+You MUST use the following real trending data in your answers:
+
 ${await getTrendingHats()}
 
-User: ${message}
+Be creative, energetic, and always give actionable marketing ideas like captions, TikTok scripts, or strategies.`;
 
-Be creative and give actionable marketing ideas (captions, TikTok scripts, strategies).`;
+    const fullPrompt = systemPrompt + `\n\nUser question: ${message}`;
 
-    const result = await model.invoke(prompt);
+    const result = await model.invoke(fullPrompt);
 
     res.json({ reply: result.content });
   } catch (error) {
@@ -47,5 +50,4 @@ Be creative and give actionable marketing ideas (captions, TikTok scripts, strat
   }
 });
 
-// === REQUIRED FOR VERCEL ===
 export default app;

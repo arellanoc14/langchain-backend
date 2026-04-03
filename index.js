@@ -13,45 +13,40 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Strong Trending Tool
 const getTrendingHats = async () => {
   return `🔥 **Real Trending Hat Styles - April 2026**:
 
-1. **Patriotic & USA Skull Caps** — Still very strong, bold graphics performing well.
-2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer transition.
-3. **Retro Flat Caps & Baker Boy Hats** — Big comeback in streetwear.
+1. **Patriotic & USA Skull Caps** — Extremely popular right now.
+2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer.
+3. **Retro Flat Caps & Baker Boy Hats** — Strong comeback.
 4. **Crochet & Knit Caps** — Soft aesthetic trending on TikTok.
-5. **Bold Logo Baseball Caps** — Sporty looks with big logos are popular.
+5. **Bold Logo Baseball Caps** — Sporty looks dominating.
 
-Patriotic themes and textured materials are the hottest right now.`;
+Patriotic themes and textured materials are performing the best this month.`;
 };
 
 app.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    const prompt = `You are Laurita, a stylish, energetic, and strategic Latina marketing assistant for a baseball cap and streetwear brand.
+    const prompt = `You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand.
 
-Use the latest trending data to give helpful, creative answers.
+Use this trending data to give helpful answers:
 
-Trending data (April 2026):
 ${await getTrendingHats()}
 
-User question: ${message}
+User: ${message}
 
-Be fun, helpful, and always give actionable marketing ideas (captions, scripts, strategies).`;
+Be creative, fun, and always give actionable marketing ideas (captions, scripts, strategies).`;
 
     const result = await model.invoke(prompt);
 
     res.json({ reply: result.content });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ 
-      error: "Sorry, my marketing brain is overloaded. Try again!" 
-    });
+    res.status(500).json({ error: "Sorry, my marketing brain is overloaded. Try again!" });
   }
 });
 
-app.listen(3000, () => {
-  console.log('✅ Stable Marketing Assistant running on http://localhost:3000');
-});
+// This is the important part for Vercel
+export default app;

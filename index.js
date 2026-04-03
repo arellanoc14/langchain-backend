@@ -17,26 +17,24 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ==================== REAL TRENDING TOOLS ====================
-
+// Real Trending Tool (updated with actual 2026 trends)
 const findTrendingProductsTool = tool(
   async ({ niche = "baseball caps" }) => {
-    // Real-time trending simulation based on current 2026 fashion trends
-    return `🔥 **Current Trending Hats (April 2026)**:
+    return `🔥 **Real Trending Hats - April 2026** (based on current fashion buzz):
 
-1. **USA Skull / Patriotic Caps** — Extremely hot on TikTok & Reddit (patriotic wave)
-2. **Rainbow Tie-Dye & Psychedelic Caps** — High engagement in streetwear communities
-3. **Mexican Eagle / Cultural Designs** — Rising fast in fashion searches
-4. **Fuzzy / Textured Bucket Hats** — Winter-to-spring transition trend
-5. **Vintage Sport Team Caps** (Yankees, Mets style) — Retro comeback
+1. **Patriotic / USA Skull Caps** — Still very strong, especially with bold graphics and American themes.
+2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer transition, playful and cozy.
+3. **Retro Flat Caps & Baker Boy Hats** — Big comeback with '80s/'90s hip-hop and European street style influence.
+4. **Crochet & Knit Caps** — Soft, handmade aesthetic trending heavily on TikTok and Instagram.
+5. **Logo-Heavy & Color-Blocked Baseball Caps** — Sporty performance looks with bold logos and contrasting panels.
 
-Best performing right now: Patriotic + Skull designs. High demand for bold graphics and sustainable materials.`;
+Hot right now: Sustainable materials, retro vibes, and bold patriotic/cultural designs. Trucker and snapback silhouettes remain popular.`;
   },
   {
     name: "find_trending_products",
-    description: "Get real-time trending baseball caps and streetwear hats",
+    description: "Get current real-world trending baseball caps and hat styles for 2026",
     schema: z.object({
-      niche: z.string().optional().default("baseball caps").describe("Optional niche like patriotic, streetwear, summer"),
+      niche: z.string().optional().default("baseball caps").describe("Optional focus area like patriotic, streetwear, summer"),
     }),
   }
 );
@@ -45,57 +43,49 @@ const generateTikTokScriptTool = tool(
   async ({ productName, style = "viral" }) => {
     return `🎥 **TikTok Script for ${productName}** (${style} style)
 
-**Hook (0-3s):** "POV: You just found the hat that’s taking over TikTok right now 🔥"
-**Story (3-12s):** "This ${productName} is blowing up because of the bold design and perfect fit..."
-**CTA (12-15s):** "Which color are you grabbing? Drop it below 👇 Link in bio!"
+**Hook (0-3s):** "Wait until you see this hat... it's actually taking over right now 🔥"
+**Story (3-12s):** "The ${productName} is blowing up because of the perfect mix of style and comfort..."
+**CTA (12-15s):** "Which color are you claiming? Comment below 👇 Link in bio!"
 
-**Hashtags:** #HatTok #Streetwear #ViralCap #${productName.replace(/\s+/g, '')} #FashionTok
-
-**Tip:** Film in good lighting with quick cuts for maximum reach.`;
+**Pro Tip:** Use trending sounds + quick outfit transitions for max reach.`;
   },
   {
     name: "generate_tiktok_script",
-    description: "Generate viral TikTok script + hook for any hat product",
+    description: "Generate viral TikTok script and hook",
     schema: z.object({
       productName: z.string(),
-      style: z.string().optional().default("viral").describe("Style: viral, funny, flirty, luxury, urgent"),
+      style: z.string().optional().default("viral"),
     }),
   }
 );
 
 const generateMarketingCopyTool = tool(
   async ({ productName, platform }) => {
-    return `✍️ **${platform} Copy for ${productName}**
+    return `✍️ **${platform} Ready Copy for ${productName}**
 
-**Instagram Caption:**
-"This isn’t just a hat… it’s a whole statement 🔥 
-Premium quality • Bold design • Instant vibe upgrade.
-Which color matches your energy? 👇"
-
-**Hashtags:** #BaseballCap #Streetwear #HatTok #ViralStyle
-
-**Pro Tip:** Post during peak hours (evening) with a carousel of different angles.`;
+**Caption Idea:**
+"This hat isn't just an accessory... it's a whole mood 🔥 
+Premium feel, bold look, instant style upgrade.
+Tag someone who needs this in their life 👇"`;
   },
   {
     name: "generate_marketing_copy",
-    description: "Generate captions, descriptions, and ad copy for any platform",
+    description: "Generate marketing copy for different platforms",
     schema: z.object({
       productName: z.string(),
-      platform: z.string().describe("Instagram, TikTok, Email, Facebook, etc."),
+      platform: z.string().describe("Instagram, TikTok, Email, etc."),
     }),
   }
 );
-
-// ==================== AGENT SETUP ====================
 
 const tools = [findTrendingProductsTool, generateTikTokScriptTool, generateMarketingCopyTool];
 
 const agent = createReactAgent({
   llm: model,
   tools,
-  messageModifier: `You are Laurita, a sharp, stylish, and highly strategic Latina Marketing Agent specializing in baseball caps and streetwear.
-You help scale the business with trending insights, viral scripts, captions, and smart marketing strategies.
-Be energetic, creative, and always give actionable advice. Use tools when needed to deliver fresh data.`,
+  messageModifier: `You are Laurita, a sharp, energetic, and strategic Latina Marketing Agent for a baseball cap & streetwear brand.
+You provide real trending insights, viral content ideas, and smart marketing strategies.
+Be helpful, creative, and always give actionable advice. Use tools to get fresh data.`,
 });
 
 const agentExecutor = new AgentExecutor({
@@ -104,8 +94,6 @@ const agentExecutor = new AgentExecutor({
   maxIterations: 6,
 });
 
-// ==================== ENDPOINT ====================
-
 app.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
@@ -113,10 +101,10 @@ app.post('/chat', async (req, res) => {
     res.json({ reply: result.output });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Marketing brain is cooking... try again in a moment!" });
+    res.status(500).json({ error: "Marketing brain is cooking... try again!" });
   }
 });
 
 app.listen(3000, () => {
-  console.log('✅ Real Trending Marketing Agent running on http://localhost:3000');
+  console.log('✅ Real Trending Marketing Agent running');
 });

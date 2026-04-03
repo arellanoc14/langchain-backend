@@ -2,7 +2,7 @@ import express from 'express';
 import { ChatOpenAI } from '@langchain/openai';
 import dotenv from 'dotenv';
 
-dotenv.config();   // ← This loads your .env file
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -26,13 +26,9 @@ app.post('/chat', async (req, res) => {
     res.json({ reply: result.content });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ 
-      error: "Failed to get response from AI", 
-      details: error.message 
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.listen(3000, () => {
-  console.log('✅ LangChain backend running on http://localhost:3000');
-});
+// This is the important part for Vercel
+export default app;

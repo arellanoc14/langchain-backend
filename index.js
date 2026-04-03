@@ -1,11 +1,7 @@
-import express from 'express';
 import { ChatOpenAI } from '@langchain/openai';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const app = express();
-app.use(express.json());
 
 const model = new ChatOpenAI({
   modelName: "gpt-4o-mini",
@@ -13,7 +9,7 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const getTrendingHats = async () => {
+const getTrendingHats = () => {
   return `🔥 **Real Trending Hat Styles - April 2026**:
 
 1. **Patriotic & USA Skull Caps** — Extremely popular right now.
@@ -25,27 +21,28 @@ const getTrendingHats = async () => {
 Patriotic themes and textured materials are performing the best this month.`;
 };
 
-app.post('/chat', async (req, res) => {
-  try {
-    const { message } = req.body;
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const { message } = req.body;
 
-    const prompt = `You are Laurita, a stylish marketing assistant for a baseball cap brand.
+      const prompt = `You are Laurita, a stylish marketing assistant for a baseball cap brand.
 
 Use this trending data:
-${await getTrendingHats()}
+${getTrendingHats()}
 
-User: ${message}
+User question: ${message}
 
-Be creative and give actionable marketing ideas.`;
+Be creative and give actionable marketing ideas (captions, TikTok scripts, strategies).`;
 
-    const result = await model.invoke(prompt);
+      const result = await model.invoke(prompt);
 
-    res.json({ reply: result.content });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Sorry, try again!" });
+      res.status(200).json({ reply: result.content });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Sorry, try again!" });
+    }
+  } else {
+    res.status(405).json({ error: "Method not allowed" });
   }
-});
-
-// Vercel Serverless Export
-export default app;
+}

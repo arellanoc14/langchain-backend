@@ -13,33 +13,33 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Simple but effective trending tool
-const findTrendingProductsTool = async (niche = "baseball caps") => {
-  return `🔥 **Current Trending Hat Styles - April 2026**:
+// Strong Trending Tool
+const getTrendingHats = async () => {
+  return `🔥 **Real Trending Hat Styles - April 2026**:
 
-1. **Patriotic Skull & USA Caps** — Extremely popular right now
-2. **Fuzzy/Textured Bucket Hats** — Big for spring/summer
-3. **Retro Flat Caps & Baker Boy Hats** — Strong comeback
-4. **Crochet & Knit Caps** — Soft aesthetic trending on TikTok
-5. **Bold Logo & Color-Blocked Baseball Caps** — Sporty looks dominating
+1. **Patriotic & USA Skull Caps** — Still very strong, bold graphics performing well.
+2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer transition.
+3. **Retro Flat Caps & Baker Boy Hats** — Big comeback in streetwear.
+4. **Crochet & Knit Caps** — Soft aesthetic trending on TikTok.
+5. **Bold Logo Baseball Caps** — Sporty looks with big logos are popular.
 
-Patriotic and textured designs are performing the best this month.`;
+Patriotic themes and textured materials are the hottest right now.`;
 };
 
 app.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    // For now, we let the LLM handle most logic with strong system prompt
-    const prompt = `You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand.
-Use the latest 2026 fashion trends to give helpful answers.
+    const prompt = `You are Laurita, a stylish, energetic, and strategic Latina marketing assistant for a baseball cap and streetwear brand.
+
+Use the latest trending data to give helpful, creative answers.
+
+Trending data (April 2026):
+${await getTrendingHats()}
 
 User question: ${message}
 
-If the question is about trending styles, use this data:
-${await findTrendingProductsTool()}
-
-Give creative, actionable marketing advice.`;
+Be fun, helpful, and always give actionable marketing ideas (captions, scripts, strategies).`;
 
     const result = await model.invoke(prompt);
 
@@ -47,7 +47,7 @@ Give creative, actionable marketing advice.`;
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ 
-      error: "Sorry, my marketing brain is thinking too hard. Try again in a moment!" 
+      error: "Sorry, my marketing brain is overloaded. Try again!" 
     });
   }
 });

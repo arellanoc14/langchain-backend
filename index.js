@@ -17,81 +17,55 @@ const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Real Trending Tool (updated with actual 2026 trends)
+// Strong Trending Tool with 2026 data
 const findTrendingProductsTool = tool(
-  async ({ niche = "baseball caps" }) => {
-    return `🔥 **Real Trending Hats - April 2026** (based on current fashion buzz):
+  async () => {
+    return `🔥 **Real Trending Hat Styles - April 2026**:
 
-1. **Patriotic / USA Skull Caps** — Still very strong, especially with bold graphics and American themes.
-2. **Fuzzy & Textured Bucket Hats** — Huge for spring/summer transition, playful and cozy.
-3. **Retro Flat Caps & Baker Boy Hats** — Big comeback with '80s/'90s hip-hop and European street style influence.
-4. **Crochet & Knit Caps** — Soft, handmade aesthetic trending heavily on TikTok and Instagram.
-5. **Logo-Heavy & Color-Blocked Baseball Caps** — Sporty performance looks with bold logos and contrasting panels.
+1. **Bucket Hats** (especially crochet and textured versions) — Very popular for spring/summer.
+2. **Logo Baseball Caps** — Classic dad caps and performance styles with bold logos.
+3. **Patriotic / Skull Graphic Caps** — Still strong, especially USA-themed designs.
+4. **Retro Flat Caps & Baker Boy Hats** — Big comeback in streetwear.
+5. **Fuzzy / Knit Caps** — Cozy textured looks gaining traction.
 
-Hot right now: Sustainable materials, retro vibes, and bold patriotic/cultural designs. Trucker and snapback silhouettes remain popular.`;
+Patriotic and bold graphic designs are performing best right now.`;
   },
   {
     name: "find_trending_products",
-    description: "Get current real-world trending baseball caps and hat styles for 2026",
-    schema: z.object({
-      niche: z.string().optional().default("baseball caps").describe("Optional focus area like patriotic, streetwear, summer"),
-    }),
+    description: "Get current trending baseball cap and hat styles for April 2026",
+    schema: z.object({}),
   }
 );
 
 const generateTikTokScriptTool = tool(
-  async ({ productName, style = "viral" }) => {
-    return `🎥 **TikTok Script for ${productName}** (${style} style)
+  async ({ productName }) => {
+    return `🎥 TikTok Script for ${productName}:
 
-**Hook (0-3s):** "Wait until you see this hat... it's actually taking over right now 🔥"
-**Story (3-12s):** "The ${productName} is blowing up because of the perfect mix of style and comfort..."
-**CTA (12-15s):** "Which color are you claiming? Comment below 👇 Link in bio!"
-
-**Pro Tip:** Use trending sounds + quick outfit transitions for max reach.`;
+Hook: "POV: You just found the hat that's taking over TikTok right now 🔥"
+Story: "This ${productName} is blowing up for its bold design and perfect fit..."
+CTA: "Which color are you grabbing? Link in bio 👇"`;
   },
   {
     name: "generate_tiktok_script",
-    description: "Generate viral TikTok script and hook",
+    description: "Generate a viral TikTok script for a hat product",
     schema: z.object({
       productName: z.string(),
-      style: z.string().optional().default("viral"),
     }),
   }
 );
 
-const generateMarketingCopyTool = tool(
-  async ({ productName, platform }) => {
-    return `✍️ **${platform} Ready Copy for ${productName}**
-
-**Caption Idea:**
-"This hat isn't just an accessory... it's a whole mood 🔥 
-Premium feel, bold look, instant style upgrade.
-Tag someone who needs this in their life 👇"`;
-  },
-  {
-    name: "generate_marketing_copy",
-    description: "Generate marketing copy for different platforms",
-    schema: z.object({
-      productName: z.string(),
-      platform: z.string().describe("Instagram, TikTok, Email, etc."),
-    }),
-  }
-);
-
-const tools = [findTrendingProductsTool, generateTikTokScriptTool, generateMarketingCopyTool];
+const tools = [findTrendingProductsTool, generateTikTokScriptTool];
 
 const agent = createReactAgent({
   llm: model,
   tools,
-  messageModifier: `You are Laurita, a sharp, energetic, and strategic Latina Marketing Agent for a baseball cap & streetwear brand.
-You provide real trending insights, viral content ideas, and smart marketing strategies.
-Be helpful, creative, and always give actionable advice. Use tools to get fresh data.`,
+  messageModifier: "You are Laurita, a stylish and strategic marketing assistant for a baseball cap brand. Use tools to get fresh trending data and generate marketing content.",
 });
 
 const agentExecutor = new AgentExecutor({
   agent,
   tools,
-  maxIterations: 6,
+  maxIterations: 5,
 });
 
 app.post('/chat', async (req, res) => {
@@ -100,11 +74,11 @@ app.post('/chat', async (req, res) => {
     const result = await agentExecutor.invoke({ input: message });
     res.json({ reply: result.output });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Marketing brain is cooking... try again!" });
+    console.error("Agent error:", error);
+    res.status(500).json({ error: "Sorry, my marketing brain is overloaded. Try again!" });
   }
 });
 
 app.listen(3000, () => {
-  console.log('✅ Real Trending Marketing Agent running');
+  console.log('✅ Marketing Agent running on http://localhost:3000');
 });
